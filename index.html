@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Content Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            text-align: center;
+        }
+        #prompt {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #response {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #37005d;
+        }
+    </style>
+</head>
+<body>
+    <h2>AI Content Generator</h2>
+    <input type="text" id="prompt" placeholder="Enter your prompt..." />
+    <button id="generate-btn">Generate</button>
+    <div id="response"></div>
+
+    <script type="module">
+        import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai";
+
+        const apiKey = "AIzaSyBp_nN72SGfUDpwSC6AYi3xkZhjiNcEASY"; // Replace with your actual API key
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+        async function generateContent() {
+            const prompt = document.getElementById("prompt").value;
+            const responseDiv = document.getElementById("response");
+            responseDiv.innerHTML = "Generating...";
+
+            try {
+                const result = await model.generateContent(prompt);
+                const text = await result.response.text();
+                responseDiv.innerHTML = `<strong>Response:</strong> ${text}`;
+            } catch (error) {
+                responseDiv.innerHTML = `<span style="color:red;">Error: ${error.message}</span>`;
+            }
+        }
+
+        // Attach function to the global window object
+        window.generateContent = generateContent;
+
+        // Attach event listener instead of inline onclick
+        document.getElementById("generate-btn").addEventListener("click", generateContent);
+    </script>
+</body>
+</html>
